@@ -1,5 +1,5 @@
-CC:=aarch64-linux-gnu-gcc  # Write it to the PATH
-LINARO_SYSROOT_AARCH64:=<path to sysroot>
+CC:=/home/vasyag/Загрузки/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc  # Write it to the PATH
+LINARO_SYSROOT_AARCH64:=/home/vasyag/Загрузки/sysroot-glibc-linaro-2.25-2019.12-aarch64-linux-gnu
 
 all: solution
 
