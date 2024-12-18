@@ -22,24 +22,31 @@ int main(int argc, char *argv[]) {
   }
   int input_size = 512;
   char buffer[512];
+  char buffer_digits[512];
+  char buffer_others[512];
   input_size = read(input_fd, buffer, input_size);
   while (input_size > 0) {
+    int digits_size = 0;
+    int others_size = 0;
     for (int i = 0; i < input_size; i++) {
       if ('0' <= buffer[i] && buffer[i] <= '9') {
-        if (write(digits_fd, &buffer[i], 1) == -1) {
-          close(input_fd);
-          close(digits_fd);
-          close(others_fd);
-          exit(3);
-        }
+        buffer_digits[digits_size++] = buffer[i];
       } else {
-        if (write(others_fd, &buffer[i], 1) == -1) {
-          close(input_fd);
-          close(digits_fd);
-          close(others_fd);
-          exit(3);
-        }
+        buffer_others[others_size++] = buffer[i];
       }
+    }
+
+    if (write(digits_fd, &buffer_digits, digits_size) == -1) {
+      close(input_fd);
+      close(digits_fd);
+      close(others_fd);
+      exit(3);
+    }
+    if (write(others_fd, &buffer_others, others_size) == -1) {
+      close(input_fd);
+      close(digits_fd);
+      close(others_fd);
+      exit(3);
     }
     input_size = read(input_fd, buffer, input_size);
   }
