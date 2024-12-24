@@ -11,11 +11,17 @@ void error_exit(const char *msg) {
   exit(EXIT_FAILURE);
 }
 
+void close_socket(int sockfd) {
+  shutdown(sockfd, SHUT_RDWR);
+  close(sockfd);
+}
+
 bool abort_connection(int status) {
   if (status == 0) return true;
   if (status == -1 && errno == ECONNRESET) return true;
   return false;
 }
+
 int main(int argc, char *argv[]) {
   if (argc < 3) {
     error_exit("Invalid argument count");
@@ -45,27 +51,24 @@ int main(int argc, char *argv[]) {
   while (scanf("%d", &number) != EOF) {
     int sended = send(sockfd, &number, sizeof(number), 0);
     if (abort_connection(sended)) {
-      shutdown(sockfd, SHUT_RDWR);
-      close(sockfd);
+      close_socket(sockfd);
       return 0;
-    } else if (sended == -1) {
-      shutdown(sockfd, SHUT_RDWR);
-      close(sockfd);
+    }
+    if (sended == -1) {
+      close_socket(sockfd);
       error_exit("Failed to send data");
     }
     int received = recv(sockfd, &number, sizeof(number), 0);
     if (abort_connection(received)) {
-      shutdown(sockfd, SHUT_RDWR);
-      close(sockfd);
+      close_socket(sockfd);
       return 0;
-    } else if (received == -1) {
-      shutdown(sockfd, SHUT_RDWR);
-      close(sockfd);
+    }
+    if (received == -1) {
+      close_socket(sockfd);
       error_exit("Failed to receive data");
     }
     printf("%d ", number);
   }
-  shutdown(sockfd, SHUT_RDWR);
-  close(sockfd);
+  close_socket(sockfd);
   return 0;
 }
