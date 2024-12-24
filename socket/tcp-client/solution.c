@@ -11,7 +11,7 @@ void error_exit(const char *msg) {
   exit(EXIT_FAILURE);
 }
 
-bool ok_connection(int status) {
+bool abort_connection(int status) {
   if (status == 0) return true;
   if (status == -1 && errno == ECONNRESET) return true;
   return false;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
   int number = 0;
   while (scanf("%d", &number) != EOF) {
     int sended = send(sockfd, &number, sizeof(number), 0);
-    if (ok_connection(sended)) {
+    if (abort_connection(sended)) {
       shutdown(sockfd, SHUT_RDWR);
       close(sockfd);
       return 0;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
       error_exit("Failed to send data");
     }
     int received = recv(sockfd, &number, sizeof(number), 0);
-    if (ok_connection(received)) {
+    if (abort_connection(received)) {
       shutdown(sockfd, SHUT_RDWR);
       close(sockfd);
       return 0;
